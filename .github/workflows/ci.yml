@@ -1,0 +1,54 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  build-and-test:
+    name: Build, Lint, and Test
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Run Linter
+      run: npm run lint
+
+    - name: Prisma Generate
+      run: npx prisma generate
+
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+
+    - name: Run E2E Tests
+      run: npm run test:e2e
+      env:
+        # Mock API keys for E2E testing
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.TEST_NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+        CLERK_SECRET_KEY: ${{ secrets.TEST_CLERK_SECRET_KEY }}
+        DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+        NEXT_PUBLIC_STREAM_API_KEY: "test-stream-key"
+        STREAM_SECRET_KEY: "test-stream-secret"
+        GEMINI_API_KEY: "test-gemini-key"
+        ARCJET_KEY: "test-arcjet-key"
+
+    - name: Upload Playwright Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 14
