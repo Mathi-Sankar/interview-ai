@@ -30,6 +30,9 @@ jobs:
     - name: Prisma Generate
       run: npx prisma generate
 
+    - name: Run Unit Tests
+      run: npm run test:unit
+
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
 
