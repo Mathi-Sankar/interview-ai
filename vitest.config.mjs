@@ -4,5 +4,10 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html'],
+      include: ['lib/**/*.{js,ts}'],
+    },
   },
 });

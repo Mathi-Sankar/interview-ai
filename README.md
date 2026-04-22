@@ -35,6 +35,29 @@ InterviewEdge connects aspiring engineers with experienced senior developers fro
 
 ---
 
+## 🏗️ System Architecture
+
+```mermaid
+graph TD
+    Client((Client Browser)) -->|HTTPS| Arcjet[Arcjet Edge Security]
+    Arcjet --> NextApp[Next.js App Router]
+    
+    subgraph Vercel Backend
+        NextApp -->|Server Actions| Prisma[Prisma ORM]
+    end
+    
+    subgraph Third-Party Services
+        NextApp -->|Auth Webhooks| Clerk[Clerk Auth]
+        NextApp -->|Realtime Video/Chat| Stream[Stream Video SDK]
+        NextApp -->|Prompt/Analysis| Gemini[Google Gemini AI]
+        Prisma -->|PostgreSQL Connection| Supabase[(Supabase Database)]
+    end
+    
+    Client -.->|Direct RTC/WSS| Stream
+```
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
